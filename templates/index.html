@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ezkopy</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        h1 { color: #00d9ff; margin-bottom: 5px; }
+        .sub { color: #888; margin-bottom: 20px; }
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            font-family: "Fira Code", monospace;
+            font-size: 14px;
+            background: #16213e;
+            color: #eee;
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            resize: vertical;
+        }
+        textarea:focus { outline: none; border-color: #00d9ff; }
+        .btns { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
+        button {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .pri { background: #00d9ff; color: #1a1a2e; }
+        .sec { background: #0f3460; color: #eee; }
+        .help {
+            margin-top: 30px;
+            padding: 15px;
+            background: #16213e;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        .help h3 { color: #00d9ff; margin: 0 0 10px; }
+        pre { background: #0f3460; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        #status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        #status.ok { display: block; background: #064e3b; color: #6ee7b7; }
+        #status.err { display: block; background: #7f1d1d; color: #fca5a5; }
+    </style>
+</head>
+<body>
+    <h1>📋 ezkopy</h1>
+    <p class="sub">Clipboard bridge for VPS terminals</p>
+    
+    <textarea id="cb" placeholder="Paste text here...">{{ clipboard }}</textarea>
+    
+    <div class="btns">
+        <button class="pri" onclick="save()">💾 Save</button>
+        <button class="sec" onclick="load()">🔄 Refresh</button>
+        <button class="sec" onclick="copy()">📋 Copy to Local</button>
+        <button class="sec" onclick="clr()">🗑️ Clear</button>
+    </div>
+    
+    <div id="status"></div>
+    
+    <div class="help">
+        <h3>Terminal Usage</h3>
+        <p><b>Server:</b> <code>{{ hostname }}</code> (<code>{{ ip }}</code>)</p>
+        <p><b>Get:</b></p>
+        <pre>curl http://{{ ip }}:{{ port }}/raw</pre>
+        <p><b>Set:</b></p>
+        <pre>curl -X POST -d "text" http://{{ ip }}:{{ port }}/raw
+cat file.txt | curl -X POST --data-binary @- http://{{ ip }}:{{ port }}/raw</pre>
+    </div>
+
+    <script>
+        const $ = id => document.getElementById(id);
+        const status = (msg, ok) => {
+            $('status').textContent = msg;
+            $('status').className = ok ? 'ok' : 'err';
+            setTimeout(() => $('status').className = '', 3000);
+        };
+        
+        async function save() {
+            const t = $('cb').value;
+            const r = await fetch('/raw', {method: 'POST', body: t});
+            status(r.ok ? `Saved (${t.length} chars)` : 'Error', r.ok);
+        }
+        
+        async function load() {
+            const r = await fetch('/raw');
+            $('cb').value = await r.text();
+            status('Refreshed', true);
+        }
+        
+        function copy() {
+            navigator.clipboard.writeText($('cb').value)
+                .then(() => status('Copied to local clipboard', true))
+                .catch(() => status('Copy failed', false));
+        }
+        
+        function clr() {
+            $('cb').value = '';
+            save();
+        }
+    </script>
+</body>
+</html>

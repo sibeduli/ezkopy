@@ -19,13 +19,13 @@
     <h3>Terminal Usage</h3>
     {% if user.pin %}
     <p><b>With PIN:</b></p>
-    <pre>curl http://{{ host }}/u/{{ user.username }}/{{ user.pin }}/raw
-curl -X POST -d "text" http://{{ host }}/u/{{ user.username }}/{{ user.pin }}/raw</pre>
+    <div class="cmd"><code>curl https://{{ host }}/u/{{ user.username }}/{{ user.pin }}/raw</code><button onclick="copyCmd(this)">📋</button></div>
+    <div class="cmd"><code>curl -X POST -d "text" https://{{ host }}/u/{{ user.username }}/{{ user.pin }}/raw</code><button onclick="copyCmd(this)">📋</button></div>
     {% endif %}
     {% if user.whitelisted_ips %}
     <p><b>With whitelisted IP:</b></p>
-    <pre>curl http://{{ host }}/u/{{ user.username }}/raw
-curl -X POST -d "text" http://{{ host }}/u/{{ user.username }}/raw</pre>
+    <div class="cmd"><code>curl https://{{ host }}/u/{{ user.username }}/raw</code><button onclick="copyCmd(this)">📋</button></div>
+    <div class="cmd"><code>curl -X POST -d "text" https://{{ host }}/u/{{ user.username }}/raw</code><button onclick="copyCmd(this)">📋</button></div>
     {% endif %}
     {% if not user.pin and not user.whitelisted_ips %}
     <p style="color: #fca5a5;">⚠️ Configure PIN or IP whitelist in <a href="{{ url_for('settings') }}">Settings</a> to enable terminal access.</p>
@@ -61,6 +61,13 @@ curl -X POST -d "text" http://{{ host }}/u/{{ user.username }}/raw</pre>
     function clr() {
         $('cb').value = '';
         save();
+    }
+    
+    function copyCmd(btn) {
+        const code = btn.previousElementSibling.textContent;
+        navigator.clipboard.writeText(code)
+            .then(() => { btn.textContent = '✓'; setTimeout(() => btn.textContent = '📋', 1500); })
+            .catch(() => status('Copy failed', false));
     }
 </script>
 {% endblock %}

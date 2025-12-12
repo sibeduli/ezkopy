@@ -33,11 +33,20 @@
 <div class="help">
     <h3>Terminal Usage</h3>
     <p><b>With PIN:</b></p>
-    <pre>curl http://{{ request.host }}/u/{{ user.username }}/YOUR_PIN/raw
-curl -X POST -d "text" http://{{ request.host }}/u/{{ user.username }}/YOUR_PIN/raw</pre>
+    <div class="cmd"><code>curl https://{{ request.host }}/u/{{ user.username }}/YOUR_PIN/raw</code><button onclick="copyCmd(this)">📋</button></div>
+    <div class="cmd"><code>curl -X POST -d "text" https://{{ request.host }}/u/{{ user.username }}/YOUR_PIN/raw</code><button onclick="copyCmd(this)">📋</button></div>
     
     <p><b>With whitelisted IP (no PIN):</b></p>
-    <pre>curl http://{{ request.host }}/u/{{ user.username }}/raw
-curl -X POST -d "text" http://{{ request.host }}/u/{{ user.username }}/raw</pre>
+    <div class="cmd"><code>curl https://{{ request.host }}/u/{{ user.username }}/raw</code><button onclick="copyCmd(this)">📋</button></div>
+    <div class="cmd"><code>curl -X POST -d "text" https://{{ request.host }}/u/{{ user.username }}/raw</code><button onclick="copyCmd(this)">📋</button></div>
 </div>
+
+<script>
+function copyCmd(btn) {
+    const code = btn.previousElementSibling.textContent;
+    navigator.clipboard.writeText(code)
+        .then(() => { btn.textContent = '✓'; setTimeout(() => btn.textContent = '📋', 1500); })
+        .catch(() => alert('Copy failed'));
+}
+</script>
 {% endblock %}

@@ -2,10 +2,14 @@ import sqlite3
 import os
 import socket
 import secrets
+import time
 from datetime import datetime
 from functools import wraps
 from flask import Flask, request, render_template, jsonify, g, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
+
+if os.environ.get("TZ"):
+    time.tzset()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))

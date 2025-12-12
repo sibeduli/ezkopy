@@ -91,7 +91,8 @@ def set_clipboard(user_id, text):
 
 def log_action(user_id, action, ip=None):
     db = get_db()
-    db.execute("INSERT INTO logs (user_id, action, ip) VALUES (?, ?, ?)", (user_id, action, ip))
+    db.execute("INSERT INTO logs (user_id, action, ip, created_at) VALUES (?, ?, ?, ?)", 
+               (user_id, action, ip, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
     db.commit()
 
 

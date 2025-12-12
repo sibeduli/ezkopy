@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}ezkopy{% endblock %}</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+        }
+        h1 { color: #00d9ff; margin-bottom: 5px; }
+        h2 { color: #00d9ff; }
+        a { color: #00d9ff; }
+        .sub { color: #888; margin-bottom: 20px; }
+        .nav {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #0f3460;
+            align-items: center;
+        }
+        .nav a { text-decoration: none; }
+        .nav a:hover { text-decoration: underline; }
+        .nav .spacer { flex: 1; }
+        .nav .user { color: #888; font-size: 14px; }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            font-family: "Fira Code", monospace;
+            font-size: 14px;
+            background: #16213e;
+            color: #eee;
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        input:focus, textarea:focus { outline: none; border-color: #00d9ff; }
+        textarea { height: 300px; resize: vertical; }
+        .btns { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
+        button, .btn {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .pri { background: #00d9ff; color: #1a1a2e; }
+        .pri:hover { background: #00b8d9; }
+        .sec { background: #0f3460; color: #eee; }
+        .sec:hover { background: #1a4a7a; }
+        .danger { background: #dc2626; color: #fff; }
+        .danger:hover { background: #b91c1c; }
+        .card {
+            padding: 20px;
+            background: #16213e;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .flash {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        .flash.error { background: #7f1d1d; color: #fca5a5; }
+        .flash.success { background: #064e3b; color: #6ee7b7; }
+        .help {
+            margin-top: 30px;
+            padding: 15px;
+            background: #16213e;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        .help h3 { color: #00d9ff; margin: 0 0 10px; }
+        pre { background: #0f3460; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        code { background: #0f3460; padding: 2px 6px; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #0f3460; }
+        th { color: #00d9ff; }
+        label { display: block; margin-bottom: 5px; color: #888; font-size: 14px; }
+        #status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        #status.ok { display: block; background: #064e3b; color: #6ee7b7; }
+        #status.err { display: block; background: #7f1d1d; color: #fca5a5; }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            background: #0f3460;
+        }
+        .badge.admin { background: #7c3aed; }
+    </style>
+</head>
+<body>
+    {% if session.user_id %}
+    <nav class="nav">
+        <a href="{{ url_for('index') }}">📋 Clipboard</a>
+        <a href="{{ url_for('settings') }}">⚙️ Settings</a>
+        {% if user and user.is_admin %}
+        <a href="{{ url_for('admin') }}">👑 Admin</a>
+        {% endif %}
+        <span class="spacer"></span>
+        <span class="user">{{ user.username if user else '' }}</span>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div class="flash {{ category }}">{{ message }}</div>
+    {% endfor %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</body>
+</html>

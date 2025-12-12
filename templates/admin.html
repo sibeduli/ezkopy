@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Admin - ezkopy{% endblock %}
+{% block content %}
+<h1>👑 Admin Panel</h1>
+<p class="sub">User management and logs</p>
+
+<div class="card">
+    <h2>Users ({{ users|length }})</h2>
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>PIN</th>
+            <th>IPs</th>
+            <th>Role</th>
+            <th>Created</th>
+            <th>Actions</th>
+        </tr>
+        {% for u in users %}
+        <tr>
+            <td>{{ u.username }}</td>
+            <td>{{ u.pin or '-' }}</td>
+            <td>{{ u.whitelisted_ips or '-' }}</td>
+            <td>
+                {% if u.is_admin %}
+                <span class="badge admin">admin</span>
+                {% else %}
+                <span class="badge">user</span>
+                {% endif %}
+            </td>
+            <td>{{ u.created_at[:10] if u.created_at else '-' }}</td>
+            <td>
+                {% if u.id != session.user_id %}
+                <form method="POST" action="{{ url_for('toggle_admin', user_id=u.id) }}" style="display:inline">
+                    <button type="submit" class="btn sec" style="padding: 4px 8px; font-size: 12px;">
+                        {% if u.is_admin %}Demote{% else %}Promote{% endif %}
+                    </button>
+                </form>
+                <form method="POST" action="{{ url_for('delete_user', user_id=u.id) }}" style="display:inline" onsubmit="return confirm('Delete {{ u.username }}?')">
+                    <button type="submit" class="btn danger" style="padding: 4px 8px; font-size: 12px;">Delete</button>
+                </form>
+                {% else %}
+                <span style="color: #666;">-</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <h2>Recent Logs (last 100)</h2>
+    <table>
+        <tr>
+            <th>Time</th>
+            <th>User</th>
+            <th>Action</th>
+            <th>IP</th>
+        </tr>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.created_at[:19] if log.created_at else '-' }}</td>
+            <td>{{ log.username or '-' }}</td>
+            <td>{{ log.action }}</td>
+            <td><code>{{ log.ip or '-' }}</code></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

@@ -7,8 +7,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN python -c "from app import init_db; init_db()"
+VOLUME /app/data
+ENV EZKOPY_DB=/app/data/clipboard.db
 
 EXPOSE 5000
 
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
+CMD ["sh", "-c", "python -c 'from app import init_db; init_db()' && gunicorn -b 0.0.0.0:5000 app:app"]

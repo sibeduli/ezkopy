@@ -3,4 +3,13 @@ services:
     build: .
     ports:
       - "5000:5000"
+    volumes:
+      - ezkopy_data:/app/data
+      - ./app.py:/app/app.py:ro
+      - ./templates:/app/templates:ro
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-}
     restart: unless-stopped
+
+volumes:
+  ezkopy_data:

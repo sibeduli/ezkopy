@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Login - ezkopy{% endblock %}
+{% block content %}
+<h1>📋 ezkopy</h1>
+<p class="sub">Clipboard bridge for VPS terminals</p>
+
+<div class="card">
+    <h2>Login</h2>
+    <form method="POST">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" required autofocus>
+        
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required>
+        
+        <div class="btns">
+            <button type="submit" class="btn pri">Login</button>
+            <a href="{{ url_for('register') }}" class="btn sec">Register</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

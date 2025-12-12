@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Settings - ezkopy{% endblock %}
+{% block content %}
+<h1>⚙️ Settings</h1>
+<p class="sub">Configure terminal access for <strong>{{ user.username }}</strong></p>
+
+<div class="card">
+    <h2>Terminal Authentication</h2>
+    <p style="color: #888; font-size: 14px; margin-bottom: 20px;">
+        At least one method must be enabled. You can use both.
+    </p>
+    
+    <form method="POST">
+        <label for="pin">PIN (short code for terminal access)</label>
+        <input type="text" name="pin" id="pin" value="{{ user.pin or '' }}" placeholder="e.g. 1234 or mypin">
+        <p style="color: #666; font-size: 12px; margin-top: -10px; margin-bottom: 15px;">
+            Usage: <code>curl http://host/u/{{ user.username }}/YOUR_PIN/raw</code>
+        </p>
+        
+        <label for="whitelisted_ips">Whitelisted IPs (comma-separated)</label>
+        <input type="text" name="whitelisted_ips" id="whitelisted_ips" value="{{ user.whitelisted_ips or '' }}" placeholder="e.g. 1.2.3.4, 5.6.7.8">
+        <p style="color: #666; font-size: 12px; margin-top: -10px; margin-bottom: 15px;">
+            Your current IP: <code>{{ client_ip }}</code><br>
+            Usage: <code>curl http://host/u/{{ user.username }}/raw</code> (no PIN needed)
+        </p>
+        
+        <div class="btns">
+            <button type="submit" class="btn pri">Save Settings</button>
+        </div>
+    </form>
+</div>
+
+<div class="help">
+    <h3>Terminal Usage</h3>
+    <p><b>With PIN:</b></p>
+    <pre>curl http://{{ request.host }}/u/{{ user.username }}/YOUR_PIN/raw
+curl -X POST -d "text" http://{{ request.host }}/u/{{ user.username }}/YOUR_PIN/raw</pre>
+    
+    <p><b>With whitelisted IP (no PIN):</b></p>
+    <pre>curl http://{{ request.host }}/u/{{ user.username }}/raw
+curl -X POST -d "text" http://{{ request.host }}/u/{{ user.username }}/raw</pre>
+</div>
+{% endblock %}

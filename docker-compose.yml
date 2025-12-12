@@ -9,6 +9,7 @@ services:
       - ./templates:/app/templates:ro
     environment:
       - SECRET_KEY=${SECRET_KEY:-}
+      - TZ=Asia/Jakarta
     restart: unless-stopped
 
 volumes:
